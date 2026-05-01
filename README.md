@@ -29,12 +29,12 @@ Each submodule is its own **independent repository** with its own CI/CD and Dock
 ```mermaid
 graph TB
     subgraph Frontends["Frontends"]
-        MOBILE["📱 Mobile (Expo)
+        MOBILE["Mobile (Expo)
         • Receipt camera
         • Clock in/out
         • Leave request
         • AI Chat"]
-        WEB["🌐 Web (Next.js 15)
+        WEB["Web (Next.js 15)
         • Dashboard
         • Analytics
         • HR Management
@@ -42,7 +42,7 @@ graph TB
     end
 
     subgraph Gateway["API Gateway"]
-        GW["🚪 Nginx :8000
+        GW["Nginx :8000
         Routes /api/auth/* → auth:8001
         Routes /api/expenses/* → finance:8002
         Routes /api/attendance/* → hr:8003
@@ -50,25 +50,25 @@ graph TB
     end
 
     subgraph Services["Microservices"]
-        AUTH["🔐 Auth Service
+        AUTH["Auth Service
         FastAPI :8001
         • Register
         • Login
         • JWT Tokens
         • Users"]
-        FIN["💰 Finance Service
+        FIN["Finance Service
         FastAPI :8002
         • Receipts
         • Expenses
         • Inventory
         • Invoices"]
-        HR["👥 HR Service
+        HR["HR Service
         FastAPI :8003
         • Employees
         • Attendance
         • Leave
         • Shifts"]
-        INTEL["🤖 Intelligence
+        INTEL["Intelligence
         FastAPI :8004
         • AI Chat (RAG)
         • Analytics KPIs
@@ -76,18 +76,18 @@ graph TB
     end
 
     subgraph Infrastructure["Infrastructure"]
-        PG[("🐘 PostgreSQL
+        PG[("PostgreSQL
         Business Data")]
-        REDIS[("⚡ Redis
+        REDIS[("Redis
         Sessions + Cache")]
-        MINIO[("📦 MinIO
+        MINIO[("MinIO
         Receipt Images")]
-        QDRANT[("🔍 Qdrant
+        QDRANT[("Qdrant
         Vector Search")]
-        OLLAMA[("🧠 Ollama
+        OLLAMA[("Ollama
         Local LLM
         + Embedder")]
-        N8N[("⚙️ n8n
+        N8N[("n8n
         Automation")]
     end
 
