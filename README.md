@@ -26,49 +26,87 @@ Each submodule is its own **independent repository** with its own CI/CD and Dock
 
 ## Architecture
 
-```
-                 ┌─────────────────────┐         ┌─────────────────────┐
-                 │   Mobile (Expo)     │         │   Web (Next.js 15)  │
-                 │   • Receipt camera  │         │   • Dashboard       │
-                 │   • Clock in/out    │         │   • Analytics       │
-                 │   • Leave request   │         │   • HR management   │
-                 │   • AI Chat         │         │   • Reports         │
-                 └──────────┬──────────┘         └──────────┬──────────┘
-                            │                               │
-                     ┌──────┴───────────────────────────────┴──────┐
-                     │         API GATEWAY (Nginx :8000)           │
-                     │  Routes /api/auth/* → auth:8001             │
-                     │  Routes /api/expenses/* → finance:8002      │
-                     │  Routes /api/attendance/* → hr:8003         │
-                     │  Routes /api/analytics/* → intelligence:8004│
-                     └──────────┬──────────┬──────────┬────────────┘
-                                │          │          │
-                 ┌──────────────┴──┐  ┌────┴────┐  ┌─┴────────────────┐
-                 │  Auth Service   │  │ Finance │  │    HR Service    │
-                 │  (FastAPI:8001) │  │ (:8002) │  │    (:8003)       │
-                 │  • Register     │  │ • Receipts │  │ • Employees   │
-                 │  • Login        │  │ • Expenses │  │ • Attendance  │
-                 │  • JWT Tokens   │  │ • Inventory│  │ • Leave       │
-                 │  • Users        │  │ • Invoices │  │ • Shifts      │
-                 └─────────────────┘  └───────────┘  └────────────────┘
-                                │          │          │
-                 ┌──────────────┴──────────┴──────────┴────────────────┐
-                 │            Intelligence Service (:8004)              │
-                 │  • AI Chat (RAG)  • Analytics KPIs  • Reports      │
-                 └───────────────────────┬──────────────────────────────┘
-                                         │
-        ┌────────────────────────────────┼────────────────────────────┐
-        │           ┌────────────┐  ┌──────────┐  ┌───────────┐     │
-        │           │ PostgreSQL │  │  Redis   │  │   MinIO   │     │
-        │           │  Business  │  │ Sessions │  │  Receipt  │     │
-        │           │    data    │  │ + Cache  │  │  Images   │     │
-        │           └────────────┘  └──────────┘  └───────────┘     │
-        │  ┌───────────┐  ┌──────────────┐  ┌──────────────────┐   │
-        │  │  Qdrant   │  │   Ollama     │  │  n8n (optional)  │   │
-        │  │  Vector   │  │  Local LLM   │  │   Automation     │   │
-        │  │  Search   │  │  + Embedder  │  │                  │   │
-        │  └───────────┘  └──────────────┘  └──────────────────┘   │
-        └───────────────────────────────────────────────────────────┘
+```mermaid
+graph TB
+    subgraph Frontends["Frontends"]
+        MOBILE["📱 Mobile (Expo)
+        • Receipt camera
+        • Clock in/out
+        • Leave request
+        • AI Chat"]
+        WEB["🌐 Web (Next.js 15)
+        • Dashboard
+        • Analytics
+        • HR Management
+        • Reports"]
+    end
+
+    subgraph Gateway["API Gateway"]
+        GW["🚪 Nginx :8000
+        Routes /api/auth/* → auth:8001
+        Routes /api/expenses/* → finance:8002
+        Routes /api/attendance/* → hr:8003
+        Routes /api/analytics/* → intelligence:8004"]
+    end
+
+    subgraph Services["Microservices"]
+        AUTH["🔐 Auth Service
+        FastAPI :8001
+        • Register
+        • Login
+        • JWT Tokens
+        • Users"]
+        FIN["💰 Finance Service
+        FastAPI :8002
+        • Receipts
+        • Expenses
+        • Inventory
+        • Invoices"]
+        HR["👥 HR Service
+        FastAPI :8003
+        • Employees
+        • Attendance
+        • Leave
+        • Shifts"]
+        INTEL["🤖 Intelligence
+        FastAPI :8004
+        • AI Chat (RAG)
+        • Analytics KPIs
+        • Reports"]
+    end
+
+    subgraph Infrastructure["Infrastructure"]
+        PG[("🐘 PostgreSQL
+        Business Data")]
+        REDIS[("⚡ Redis
+        Sessions + Cache")]
+        MINIO[("📦 MinIO
+        Receipt Images")]
+        QDRANT[("🔍 Qdrant
+        Vector Search")]
+        OLLAMA[("🧠 Ollama
+        Local LLM
+        + Embedder")]
+        N8N[("⚙️ n8n
+        Automation")]
+    end
+
+    MOBILE --> GW
+    WEB --> GW
+    GW --> AUTH
+    GW --> FIN
+    GW --> HR
+    GW --> INTEL
+    AUTH --> PG
+    AUTH --> REDIS
+    FIN --> PG
+    FIN --> REDIS
+    FIN --> MINIO
+    HR --> PG
+    HR --> REDIS
+    INTEL --> PG
+    INTEL --> QDRANT
+    INTEL --> OLLAMA
 ```
 
 ## Quick Start (Docker)
