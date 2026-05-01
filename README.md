@@ -1,4 +1,4 @@
-# ReceiptBuddy 📸
+# ReceiptBuddy
 
 **AI-powered business management platform** — receipt scanning, expense tracking, smart shift scheduling, attendance & leave management, and AI business chat.
 
@@ -34,7 +34,7 @@ Each submodule is its own **independent repository** with its own CI/CD and Dock
 - [Docker](https://docs.docker.com/get-docker/) & [Docker Compose](https://docs.docker.com/compose/install/) (v2.20+)
 - [Git](https://git-scm.com/) with submodule support
 
-### 🚀 Run Everything
+### Run Everything
 
 ```bash
 # Clone with submodules
@@ -166,18 +166,18 @@ npx expo start
 
 | # | Feature | Description |
 |---|---------|-------------|
-| 1 | 📸 Receipt Scanner | Snap photo → OCR → auto-extract vendor, date, total, items |
-| 2 | 💰 Expense Tracker | Categorize, tag, track all business spending |
-| 3 | 📊 Analytics Dashboard | Spending trends, category breakdown, KPIs |
-| 4 | 🤖 AI Business Chat | Chat with your business data in plain English (RAG) |
-| 5 | 📅 Smart Shift Scheduler | AI generates optimal shift schedules |
-| 6 | ✅ Attendance Tracker | Clock in/out with GPS, breaks, overtime |
-| 7 | 🩺 Leave Management | Sick, medical, annual, unpaid with approval flow |
-| 8 | 👥 Employee Management | Profiles, roles, documents, performance notes |
-| 9 | 🏪 Inventory Alerts | Low stock warnings, reorder triggers |
-| 10 | 📈 Financial Reports | Monthly P&L, expense breakdown, payroll |
-| 11 | 🔔 Smart Notifications | Shift reminders, leave status, low stock |
-| 12 | 📄 Invoice Generator | Auto-generate invoices for clients |
+| 1 | Receipt Scanner | Snap photo, run OCR, and auto-extract vendor, date, total, items |
+| 2 | Expense Tracker | Categorize, tag, and track all business spending |
+| 3 | Analytics Dashboard | Spending trends, category breakdown, KPIs |
+| 4 | AI Business Chat | Chat with your business data in plain English (RAG) |
+| 5 | Smart Shift Scheduler | AI generates optimal shift schedules |
+| 6 | Attendance Tracker | Clock in/out with GPS, breaks, overtime |
+| 7 | Leave Management | Sick, medical, annual, unpaid with approval flow |
+| 8 | Employee Management | Profiles, roles, documents, performance notes |
+| 9 | Inventory Alerts | Low stock warnings, reorder triggers |
+| 10 | Financial Reports | Monthly P&L, expense breakdown, payroll |
+| 11 | Smart Notifications | Shift reminders, leave status, low stock |
+| 12 | Invoice Generator | Auto-generate invoices for clients |
 
 ## Tech Stack
 
@@ -216,7 +216,7 @@ git submodule update --remote common
 
 ```
 ReceiptBuddy/                          # Superproject (submodule orchestrator)
-├── common/                → 🧩 Submodule: Shared Python library
+├── common/                → Submodule: Shared Python library
 │   ├── config.py          → Pydantic BaseSettings
 │   ├── database.py        → DatabaseManager, session factory
 │   ├── security.py        → JWT + bcrypt
@@ -226,13 +226,13 @@ ReceiptBuddy/                          # Superproject (submodule orchestrator)
 │   ├── repositories/      → BaseRepository[T] + domain repos
 │   └── schemas/           → Pydantic request/response schemas
 ├── services/
-│   ├── auth/              → 🔐 Submodule: Auth Service (:8001)
-│   ├── finance/           → 💰 Submodule: Finance Service (:8002)
-│   ├── hr/                → 👥 Submodule: HR Service (:8003)
-│   └── intelligence/      → 🤖 Submodule: Intelligence Service (:8004)
-├── gateway/               → 🚪 Submodule: Nginx API Gateway
-├── frontend-web/          → 🌐 Submodule: Next.js web app
-├── mobile/                → 📱 Submodule: Expo React Native app
+│   ├── auth/              → Submodule: Auth Service (:8001)
+│   ├── finance/           → Submodule: Finance Service (:8002)
+│   ├── hr/                → Submodule: HR Service (:8003)
+│   └── intelligence/      → Submodule: Intelligence Service (:8004)
+├── gateway/               → Submodule: Nginx API Gateway
+├── frontend-web/          → Submodule: Next.js web app
+├── mobile/                → Submodule: Expo React Native app
 ├── docker-compose.yml     → (from infra repo)
 └── README.md
 ```
