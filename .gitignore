@@ -51,3 +51,4 @@ Thumbs.db
 # DO NOT commit submodule content directly — use git submodule commands
 /ReceiptBuddy-*/
 .claude/
+
