@@ -1,24 +1,24 @@
 [submodule "common"]
-    path = common
-    url = https://github.com/lqmnwido/ReceiptBuddy-library.git
+	path = common
+	url = git@github.com:lqmnwido/ReceiptBuddy-library.git
 [submodule "services/auth"]
-    path = services/auth
-    url = https://github.com/lqmnwido/ReceiptBuddy-auth.git
+	path = services/auth
+	url = git@github.com:lqmnwido/ReceiptBuddy-auth.git
 [submodule "services/finance"]
-    path = services/finance
-    url = https://github.com/lqmnwido/ReceiptBuddy-finance.git
+	path = services/finance
+	url = git@github.com:lqmnwido/ReceiptBuddy-finance.git
 [submodule "services/hr"]
-    path = services/hr
-    url = https://github.com/lqmnwido/ReceiptBuddy-hr.git
+	path = services/hr
+	url = git@github.com:lqmnwido/ReceiptBuddy-hr.git
 [submodule "services/intelligence"]
-    path = services/intelligence
-    url = https://github.com/lqmnwido/ReceiptBuddy-intelligence.git
+	path = services/intelligence
+	url = git@github.com:lqmnwido/ReceiptBuddy-intelligence.git
 [submodule "gateway"]
-    path = gateway
-    url = https://github.com/lqmnwido/ReceiptBuddy-gateway.git
+	path = gateway
+	url = git@github.com:lqmnwido/ReceiptBuddy-gateway.git
 [submodule "frontend-web"]
-    path = frontend-web
-    url = https://github.com/lqmnwido/ReceiptBuddy-web.git
+	path = frontend-web
+	url = git@github.com:lqmnwido/ReceiptBuddy-web.git
 [submodule "mobile"]
-    path = mobile
-    url = https://github.com/lqmnwido/ReceiptBuddy-mobile.git
+	path = mobile
+	url = git@github.com:lqmnwido/ReceiptBuddy-mobile.git
