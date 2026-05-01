@@ -1,0 +1,263 @@
+# ReceiptBuddy Microservices — Root Orchestrator
+#
+# This docker-compose.yml lives in the ReceiptBuddy superproject and
+# orchestrates all submodules for LOCAL DEVELOPMENT.
+#
+# Start everything:
+#   docker compose up -d
+#
+# Individual services can also be built/run separately:
+#   docker compose build auth finance hr intelligence
+#   docker compose up -d postgres redis minio qdrant
+#
+# NOTE: The build context is "." (root of superproject), so each service's
+# Dockerfile can COPY from common/ (which is a submodule at the root).
+# This differs from the standalone per-service Dockerfiles which install
+# the common package from GitHub directly.
+
+name: receiptbuddy
+
+services:
+  # ─── DATABASE ─────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: rb-postgres
+    environment:
+      POSTGRES_USER: receiptbuddy
+      POSTGRES_PASSWORD: receiptbuddy123
+      POSTGRES_DB: receiptbuddy
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U receiptbuddy"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - receiptbuddy-net
+    restart: unless-stopped
+
+  # ─── CACHE ────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: rb-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - receiptbuddy-net
+    restart: unless-stopped
+
+  # ─── OBJECT STORAGE ──────────────────────────────
+  minio:
+    image: minio/minio:latest
+    container_name: rb-minio
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: receiptbuddy
+      MINIO_ROOT_PASSWORD: receiptbuddy123
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - receiptbuddy-net
+    restart: unless-stopped
+
+  # ─── VECTOR DATABASE ─────────────────────────────
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: rb-qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    networks:
+      - receiptbuddy-net
+    restart: unless-stopped
+
+  # ─── AUTH SERVICE ────────────────────────────────
+  auth:
+    build:
+      context: .
+      dockerfile: services/auth/Dockerfile
+    container_name: rb-auth
+    ports:
+      - "8001:8001"
+    environment:
+      DATABASE_URL: postgresql://receiptbuddy:receiptbuddy123@postgres:5432/receiptbuddy
+      REDIS_URL: redis://redis:6379
+      SECRET_KEY: super-secret-key-change-in-production
+      MINIO_ENDPOINT: minio:9000
+      QDRANT_HOST: qdrant
+      OLLAMA_URL: http://host.docker.internal:11434
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - receiptbuddy-net
+    restart: unless-stopped
+
+  # ─── FINANCE SERVICE ─────────────────────────────
+  finance:
+    build:
+      context: .
+      dockerfile: services/finance/Dockerfile
+    container_name: rb-finance
+    ports:
+      - "8002:8002"
+    environment:
+      DATABASE_URL: postgresql://receiptbuddy:receiptbuddy123@postgres:5432/receiptbuddy
+      REDIS_URL: redis://redis:6379
+      SECRET_KEY: super-secret-key-change-in-production
+      MINIO_ENDPOINT: minio:9000
+      QDRANT_HOST: qdrant
+      OLLAMA_URL: http://host.docker.internal:11434
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    networks:
+      - receiptbuddy-net
+    restart: unless-stopped
+
+  # ─── HR SERVICE ──────────────────────────────────
+  hr:
+    build:
+      context: .
+      dockerfile: services/hr/Dockerfile
+    container_name: rb-hr
+    ports:
+      - "8003:8003"
+    environment:
+      DATABASE_URL: postgresql://receiptbuddy:receiptbuddy123@postgres:5432/receiptbuddy
+      REDIS_URL: redis://redis:6379
+      SECRET_KEY: super-secret-key-change-in-production
+      MINIO_ENDPOINT: minio:9000
+      QDRANT_HOST: qdrant
+      OLLAMA_URL: http://host.docker.internal:11434
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - receiptbuddy-net
+    restart: unless-stopped
+
+  # ─── INTELLIGENCE SERVICE ────────────────────────
+  intelligence:
+    build:
+      context: .
+      dockerfile: services/intelligence/Dockerfile
+    container_name: rb-intelligence
+    ports:
+      - "8004:8004"
+    environment:
+      DATABASE_URL: postgresql://receiptbuddy:receiptbuddy123@postgres:5432/receiptbuddy
+      REDIS_URL: redis://redis:6379
+      SECRET_KEY: super-secret-key-change-in-production
+      MINIO_ENDPOINT: minio:9000
+      QDRANT_HOST: qdrant
+      OLLAMA_URL: http://host.docker.internal:11434
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - receiptbuddy-net
+    restart: unless-stopped
+
+  # ─── API GATEWAY ─────────────────────────────────
+  gateway:
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    container_name: rb-gateway
+    ports:
+      - "8000:8000"
+    depends_on:
+      - auth
+      - finance
+      - hr
+      - intelligence
+    networks:
+      - receiptbuddy-net
+    restart: unless-stopped
+
+  # ─── FRONTEND (Next.js) ──────────────────────────
+  frontend:
+    build:
+      context: ./frontend-web
+      dockerfile: Dockerfile
+    container_name: rb-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+    depends_on:
+      - gateway
+    networks:
+      - receiptbuddy-net
+    restart: unless-stopped
+
+  # ─── n8n AUTOMATION ──────────────────────────────
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: rb-n8n
+    ports:
+      - "5678:5678"
+    environment:
+      N8N_BASIC_AUTH_ACTIVE: "true"
+      N8N_BASIC_AUTH_USER: admin
+      N8N_BASIC_AUTH_PASSWORD: admin123
+      N8N_HOST: localhost
+      N8N_PORT: 5678
+      WEBHOOK_URL: http://localhost:5678
+    volumes:
+      - n8n_data:/home/node/.n8n
+    networks:
+      - receiptbuddy-net
+    restart: unless-stopped
+
+networks:
+  receiptbuddy-net:
+    name: receiptbuddy-net
+    driver: bridge
+
+volumes:
+  pgdata:
+  redis_data:
+  minio_data:
+  qdrant_data:
+  n8n_data:
+

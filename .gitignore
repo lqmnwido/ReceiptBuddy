@@ -1,0 +1,52 @@
+# Environment
+.env
+.env.local
+backend/.env
+frontend-web/.env
+mobile/.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+*.egg-info/
+dist/
+build/
+
+# Node
+node_modules/
+.next/
+npm-debug.log*
+
+# Expo
+.expo/
+dist/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+.docker/
+
+# Submodule placeholders (actual content managed by git submodule)
+# DO NOT commit submodule content directly — use git submodule commands
+/ReceiptBuddy-*/

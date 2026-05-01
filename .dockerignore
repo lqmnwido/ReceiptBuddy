@@ -1,0 +1,27 @@
+# Python
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/.venv/
+**/venv/
+
+# Node
+**/node_modules/
+**/.next/
+
+# IDE
+**/.vscode/
+**/.idea/
+
+# Git
+.git/
+.gitignore
+
+# OS
+**/.DS_Store
+
+# Docker (skip other compose files)
+**/docker-compose*.yml
+
+# Docs
+**/*.md
