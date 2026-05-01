@@ -50,3 +50,4 @@ Thumbs.db
 # Submodule placeholders (actual content managed by git submodule)
 # DO NOT commit submodule content directly — use git submodule commands
 /ReceiptBuddy-*/
+.claude/
